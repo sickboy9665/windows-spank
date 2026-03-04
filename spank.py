@@ -16,6 +16,18 @@ COOLDOWN_SECONDS = 1.0
 # Global state
 last_hit_time = 0
 forced_intensity = None
+spank_count = 0
+
+def play_specific_sound(file_path):
+    """Play a specific sound file using pygame (non-blocking)."""
+    if not os.path.exists(file_path):
+        return
+        
+    try:
+        sound = pygame.mixer.Sound(file_path)
+        sound.play()
+    except Exception as e:
+        print(f"Error playing sound: {e}")
 
 def play_random_sound(intensity):
     """Pick a random sound from the intensity folder and play it."""
@@ -29,17 +41,11 @@ def play_random_sound(intensity):
         return
         
     sound_file = os.path.join(folder, random.choice(files))
-    
-    # Play sound using pygame (this is non-blocking)
-    try:
-        sound = pygame.mixer.Sound(sound_file)
-        sound.play()
-    except Exception as e:
-        print(f"Error playing sound: {e}")
+    play_specific_sound(sound_file)
 
 def audio_callback(indata, frames, time_info, status):
     """Callback function for the audio stream to process microphone input."""
-    global last_hit_time, forced_intensity
+    global last_hit_time, forced_intensity, spank_count
     
     if status:
         pass # Ignore status warnings like underflow for simplicity
@@ -55,6 +61,15 @@ def audio_callback(indata, frames, time_info, status):
         
     # Classify the hit intensity
     if volume > LIGHT_THRESHOLD:
+        spank_count += 1
+        
+        if spank_count >= 10:
+            print("10 hits detected! Playing long audio...")
+            play_specific_sound(os.path.join("sounds", "longaudio.mp3"))
+            spank_count = 0  # Reset spank counter
+            last_hit_time = current_time
+            return
+
         if forced_intensity:
             print(f"Hit detected. Playing preferred spank: {forced_intensity}")
             play_random_sound(forced_intensity)
@@ -76,8 +91,8 @@ def main():
     global forced_intensity
     
     parser = argparse.ArgumentParser(description="Laptop Spank - Reacts when you slap your laptop")
-    parser.add_argument('--spank', type=str, choices=['light', 'medium', 'hard'], 
-                        help='Force a specific spank intensity (e.g., hard)')
+    parser.add_argument('--spank', type=str, choices=['light', 'medium', 'hard', 'hent-ai'], 
+                        help='Force a specific spank intensity (e.g., hard, hent-ai)')
     args = parser.parse_args()
     
     if args.spank:
@@ -87,7 +102,7 @@ def main():
     pygame.mixer.init()
     
     # Ensure sound folders exist so it doesn't crash if folders are empty
-    for intensity in ["light", "medium", "hard"]:
+    for intensity in ["light", "medium", "hard", "hent-ai"]:
         os.makedirs(os.path.join("sounds", intensity), exist_ok=True)
         
     print("Listening... slap your laptop.")

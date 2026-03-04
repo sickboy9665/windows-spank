@@ -31,6 +31,8 @@ To add your own custom sounds:
 1. Place light hit sounds in `sounds/light/`
 2. Place medium hit sounds in `sounds/medium/`
 3. Place hard hit sounds in `sounds/hard/`
+4. Place hent-ai sounds in `sounds/hent-ai/` 
+5. Place a long audio file in `sounds/longaudio.mp3` designed to play once every 10 continuous spanks!
 
 If a folder is empty, the program will just skip playing a sound without crashing.
 
@@ -43,10 +45,10 @@ python spank.py
 ```
 
 ### Preferred Spank
-You can optionally specify a preferred spank intensity (light, medium, or hard). Any detected hit will play the sound from that specific folder:
+You can optionally specify a preferred spank intensity (light, medium, hard, or hent-ai). Any detected hit will play the sound from that specific folder:
 
 ```bash
-python spank.py --spank hard
+python spank.py --spank hent-ai
 ```
 
 You should see:
