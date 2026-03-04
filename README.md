@@ -2,6 +2,9 @@
 
 A fun tool that reacts when you slap your laptop.
 
+# Inspired from spank https://github.com/taigrr/spank
+Added the same sounds to this project. Now spank your windows laptop as well!!
+
 ## How it works
 
 The script continuously listens to your microphone input. When you hit or slap your laptop, it detects the sudden audio volume spike. Depending on the amplitude of the spike, it classifies the hit into three levels:
